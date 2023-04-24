@@ -1,0 +1,2 @@
+{'sugar': 12, 'flour': 100, 'banana': 20, 'apple': 18.0}
+0

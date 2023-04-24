@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Admin interface
+{% endblock %}
+
+{% block main %}
+<div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            {% if category == 'success' %}
+              <div class="alert alert-success" role="alert">
+            {% else %}
+              <div class="alert alert-danger" role="alert">
+            {% endif %}
+              {{ message }}
+            </div>
+        {% endfor %}
+      {% endif %}
+  {% endwith %}
+</div>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for i in items %}
+      <tr>
+        <th scope="row">{{ i["name"] }}</th>
+        <td>{{ i["price"] }}</td>
+        <form action="/edit" method="get">
+          <td><button class="btn btn-info" name="edited" value={{ i["name"] }}>Edit</button></td>
+        </form>
+        <form action="/delete" method="post">
+        <td><button class="btn btn-danger" name="name" value={{ i["name"] }}>Delete</button></td>
+        </form>
+        {% endfor %}
+    </tr>
+    </tbody>
+  </table>
+
+
+{% endblock %}

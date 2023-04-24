@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+<h1>{{ name }}</h1>
+<form action="/edit" method="post">
+    <div class="mb-3">
+        <input type="hidden" name="edited" value={{ name }}>
+        <input style="margin:10px" autocomplete="off" autofocus class="form-control mx-auto w-auto" name="price" placeholder="New Price" type="number">
+        <button class="btn btn-primary" type="submit">Edit</button>
+    </div>
+</form>
+
+{% endblock %}
