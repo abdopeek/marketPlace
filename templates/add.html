@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add items
+{% endblock %}
+
+{% block main %}
+
+    <h1>Add item</h1>
+    <form action="/add" method="post">
+        <input style="margin:10px" autocomplete="off" autofocus class="form-control mx-auto w-auto" name="Name" placeholder="Item Name" type="text">
+        <input style="margin:10px" autocomplete="off" autofocus class="form-control mx-auto w-auto" name="price" placeholder="Item Price" type="number">
+        <button class="btn btn-primary" type="submit">Add</button>
+    </form>
+
+{% endblock %}

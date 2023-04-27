@@ -119,3 +119,22 @@ def edit():
         else:
             flash("Incorrect price given", category="error")
             return redirect("admin")
+
+@app.route("/add", methods = ["GET", "POST"])
+@login_required
+def add():
+    if request.method == "GET": #  User clicked on the site or went to
+        return render_template('add.html')
+    else:
+        name = request.form.get("Name")
+        price = float(request.form.get("price"))
+        if not name or not price:
+            flash("Missing arguments", category="error")
+            return redirect("admin")
+        if price < 0:
+            flash("Incorrect price given", category="error")
+            return redirect("admin")
+        c.execute(f"INSERT INTO inventory (name, price) VALUES ('{name}', {price})")
+        conn.commit()
+        flash(f"{name.capitalize()} has been added successfully", category="success")
+        return redirect("admin")
