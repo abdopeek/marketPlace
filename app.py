@@ -2,6 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from flask_session import Session
 from utils import login_required
 import os
+import sqlite3
 
 
 app = Flask(__name__)
@@ -16,6 +17,9 @@ admins = {
     "chris" : "1111",
     "humaid" : "2222"
 }
+
+conn = sqlite3.connect("inventory.db", check_same_thread=False)
+c = conn.cursor()
 
 
 @app.after_request
@@ -67,13 +71,14 @@ def login():
 @app.route('/admin')
 @login_required
 def admin():
-    f = open("inventory.txt")
-    items = f.readlines()[0]
-    items = dict(eval(items))
+    c.execute("SELECT * FROM inventory")
+    items = c.fetchall()
+    items_name = [item[0] for item in items]
+    items_price = [item[1] for item in items]
+    items = dict(map(lambda i, j: (i, j), items_name, items_price))
     inv = []
     for key, value in items.items():
         inv.append({"name": key, "price": value})
-    f.close()
     return render_template("admin.html", items=inv)
 
 
@@ -91,11 +96,8 @@ def delete():
         return redirect('admin')
     else:
         name = request.form.get("name")
-        with open('inventory.txt') as inv:
-            tmp = dict(eval(inv.readlines()[0]))
-            del tmp[name]
-        with open("inventory.txt", 'w') as inv:
-            inv.write(str(tmp))
+        c.execute(f"DELETE FROM inventory WHERE name = '{name}'")
+        conn.commit()
         return redirect('admin')
 
 
@@ -109,15 +111,11 @@ def edit():
         name = request.form.get("edited")
         new_price = request.form.get("price")
         new_price = float(new_price)
-        with open('inventory.txt') as inv:
-            tmp = dict(eval(inv.read()))
         if new_price and new_price >= 0:
-            tmp[name] = new_price
-            with open("inventory.txt", 'w') as inv:
-                inv.write(str(tmp))
+            c.execute(f"UPDATE inventory SET price = {new_price} WHERE name = '{name}'")
+            conn.commit()
             flash(f"{name} edited successfully", category="success")
             return redirect("admin")
         else:
             flash("Incorrect price given", category="error")
             return redirect("admin")
-
